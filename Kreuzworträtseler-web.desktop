@@ -1,0 +1,7 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Terminal=true
+Exec=/opt/Kreuzworträtseler/crosswords.jl --http
+Name=Kreuzworträtseler (Web)
+Icon=/opt/Kreuzworträtseler/Kreuzworträtseler-web.png

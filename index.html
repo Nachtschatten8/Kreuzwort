@@ -1,0 +1,87 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+  </head>
+  <body>
+    <h1>Kreuzworträtseler</h1>
+
+    <form id="searchform">
+    <p>
+      Sprache:
+      <select id="language">
+        <option value="D">Deutsch</option>
+        <option value="F">Französisch</option>
+      </select>
+    </p>
+    <p>
+      Bitte gebe ein Wort ein und ersetze unbekannte Buchstaben durch * (zum Beispiel maiso*) <br />
+      <div style="text-align: center;">
+      <div id="searchbar" style="display: inline-block;">
+        <input id="pattern" type="text" value="Ha**">
+        <input type="submit" id="suchen" value="Suchen">
+      </div>
+      </div>
+        <div id="result" style="column-count: 5;">        </div>
+    </p>
+    </form>
+    <script type="text/javascript">
+
+      function getJSON(url,callback) {
+          var  xhr = new XMLHttpRequest();
+          xhr.open("GET",url,true);
+          xhr.resposeType = "json";
+          xhr.onload = function() {
+              if (xhr.status == 200) {
+                  callback(null,JSON.parse(xhr.response));
+              }
+              else {
+                  callback(xhr.status,xhr.response);
+              }
+          };
+          xhr.send();
+      }
+
+      function show_results(err,response) {
+
+          if (err === null) {
+              console.log("response ",response);
+              console.log("response.candidates ",response.candidates);
+
+              const myNode = document.getElementById("result");
+              while (myNode.firstChild) {
+                  myNode.removeChild(myNode.firstChild);
+              }
+
+              for (var i = 0; i < response["candidates"].length; i++) {
+                  var div = document.createElement("div");
+                  div.appendChild(document.createTextNode(response.candidates[i]));
+                  myNode.appendChild(div);
+              }
+          }
+      }
+
+      function suchen(ev) {
+          if (ev.preventDefault) {
+              ev.preventDefault();
+          }
+
+          const myNode = document.getElementById("result");
+          while (myNode.firstChild) {
+              myNode.removeChild(myNode.firstChild);
+          }
+
+          var lang = document.getElementById("language").value;
+          var pattern = document.getElementById("pattern").value;
+          var url = "http://localhost:8082/api/Kreuzwortr%C3%A4tseler/suche/D/Ha**"
+          url = "http://localhost:8082/api/Kreuzwortr%C3%A4tseler/suche/" + encodeURIComponent(lang) + "/" + encodeURIComponent(pattern);
+          url = "api/Kreuzwortr%C3%A4tseler/suche/" + encodeURIComponent(lang) + "/" + encodeURIComponent(pattern);
+          getJSON(url,show_results);
+
+          return false;
+      }
+
+      document.getElementById("searchform").addEventListener("submit", suchen);
+    </script>
+  </body>
+</html>
